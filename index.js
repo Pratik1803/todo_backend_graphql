@@ -1,29 +1,28 @@
 require("dotenv").config();
 require("./config/conn");
-const express = require("express");
 const PORT = process.env.PORT || 8001;
-const { graphqlHTTP } = require("express-graphql");
+const { ApolloServer } = require("@apollo/server");
+const { startStandaloneServer } = require("@apollo/server/standalone");
 const { typeDefs } = require("./schema/typedefs");
 const { resolvers } = require("./schema/resolvers");
 
-const app = express();
-
-app.use(
-  "/graphql",
-  graphqlHTTP({
-    schema: typeDefs,
-    rootValue: resolvers,
-    graphiql: true,
-  })
-);
-
-app.get("/", (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "hit /graphql for graphiql interface",
-  });
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is listening on port ${PORT}...`);
-});
+const startServer = async () => {
+  try {
+    const { url } = await startStandaloneServer(server, {
+      listen: {
+        port: PORT,
+      },
+    });
+
+    console.log(`Server ready at ${url}`);
+  } catch (error) {
+    console.log(`Err in starting server: ${error}`);
+  }
+};
+
+startServer();

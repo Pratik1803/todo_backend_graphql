@@ -1,6 +1,4 @@
-const { buildSchema, graphql } = require("graphql");
-
-const typeDefs = buildSchema(`
+const typeDefs = `
     type Task{
         id:ID
         title: String!
@@ -44,6 +42,5 @@ const typeDefs = buildSchema(`
         getTasks(uid:String!): [Task!] 
         completeTask(taskID:String!): Task
     }
-`);
-
+`;
 module.exports = { typeDefs };
